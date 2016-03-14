@@ -1,0 +1,6 @@
+#!/bin/sh
+
+/usr/local/bin/redis-cli set "change" "yeah"
+export DISPLAY=:0
+/usr/bin/xrandr --output 'DisplayPort-0' --off
+

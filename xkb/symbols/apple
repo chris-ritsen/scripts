@@ -1,0 +1,46 @@
+
+// ../apple.xkb
+// /usr/share/X11/xkb/symbols/macintosh_vndr/apple
+// /usr/share/X11/xkb/symbols/macintosh_vndr/us
+
+xkb_symbols "custom" {
+
+  // include "capslock(ctrl_modifier)"
+  // include "capslock(none)"
+
+  // key <CAPS> { [ Control_L, Control_L ] };
+
+  key <LCTL> { [ Control_L, Control_L ], repeat=no };
+  key <RCTL> { [ Control_R, Control_R ] };
+  
+  replace key <CAPS> {
+    type[Group1] = "ONE_LEVEL",
+    symbols[Group1] = [ Control_L ],
+    actions[Group1] = [ SetMods(modifiers=Control) ]
+  };
+
+  modifier_map Control { <CAPS>, <LCTL> };
+
+  // key <NMLK> { [ Num_Lock, Num_lock ] };
+  // override key <CAPS> { [ Control_L ] }; 
+
+  override key <BKSP> { [ Return, Return ] }; 
+  override key <ESC>  { [ asciitilde, grave ] };
+  override key <LALT> { [ Alt_L, Meta_L ] };
+  override key <LFSH> { [ Shift_L, Shift_L ] };
+  override key <RTSH> { [ Shift_R, Shift_R ] };
+  override key <TLDE> { [ Escape, Escape ] };
+  override key <RTRN> { [ Control_L, Control_L ] };
+
+  // override key <RALT> { [ Alt_R, Meta_R ] };
+  override key <RALT> { [ISO_Level3_Shift ] };
+  modifier_map Mod5 { ISO_Level3_Shift };
+
+  key.type = "THREE_LEVEL";
+  key <AC06> { [ h, H,  Left ] };
+  key <AC07> { [ j, J,  Down ] };
+  key <AC08> { [ k, K,    Up ] };
+  key <AC09> { [ l, L, Right ] };
+
+};
+

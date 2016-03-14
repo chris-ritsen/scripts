@@ -1,0 +1,45 @@
+#!/bin/sh
+
+export DISPLAY=:0
+
+# /usr/bin/xrandr --output 'DisplayPort-0' --off --output 'DVI-0' --off --output 'HDMI-0' --off --output 'DisplayPort-1' --off 
+# TODO: Check for disconnected displays
+# /usr/bin/xrandr --output 'HDMI-0' --auto --rotate normal --output 'DVI-0' --auto --left-of 'HDMI-0' --rotate left --output 'DisplayPort-0' --auto --left-of 'DVI-0' --rotate normal --output 'DisplayPort-1' --auto --left-of 'DisplayPort-0' --rotate left 
+
+# TODO: Check for DisplayPort
+# if [ -z "$HDMI" ]; then
+#   echo 'no hdtv'
+# else
+  # /usr/bin/xrandr --output 'eDP1' --auto --output 'HDMI-0' --right-of 'eDP1' --auto
+# fi
+
+# if [ -z "${DP1}${HDTV}" ]; then
+  # /usr/bin/xrandr --output 'eDP1' --auto --output 'HDMI1' --off --output 'DP1' --off
+# fi
+
+DP0=$(xrandr -q | grep -e 'DisplayPort-0 connected')
+DP1=$(xrandr -q | grep -e 'DisplayPort-1 connected')
+DVI=$(xrandr -q | grep -e 'DVI-0 connected')
+HDMI=$(xrandr -q | grep -e 'HDMI-0 connected')
+
+if [ -z "$DP0" ]; then
+  # /usr/bin/xrandr --nograb --output 'HDMI-0' --auto --rotate normal --output 'DVI-0' --auto --left-of 'HDMI-0' --rotate left --output 'DisplayPort-0' --off --output 'DisplayPort-1' --auto --left-of 'DVI-0' --rotate left 
+  # /usr/bin/xrandr --nograb --output 'DisplayPort-0' --off
+  xdotool key 'super+w+2'
+  xdotool key 'super+e+3'
+  xdotool key 'super+r+4'
+  xdotool key 'super+q+1'
+else
+  DISPLAY=:0 xrandr --output DisplayPort-0 --off --output DVI-0 --off --output DisplayPort-1  --off --output HDMI-0 --off && DISPLAY=:0 xrandr --output DisplayPort-0 --auto --output DVI-0 --auto --rotate left --right-of DisplayPort-0 --output DisplayPort-1  --auto --rotate left --left-of DisplayPort-0 && DISPLAY=:0 xrandr --addmode HDMI-0 1920x1080 && DISPLAY=:0 xrandr --output HDMI-0 --left-of DisplayPort-1 --mode 1920x1080 && DISPLAY=:0 xrandr --addmode DisplayPort-0 2560x1600 && DISPLAY=:0 xrandr --output DisplayPort-0 --left-of DVI-0 --mode 2560x1600
+  # /usr/bin/xrandr --nograb --output 'DisplayPort-0' --off
+  # /usr/bin/xrandr --nograb --output 'DisplayPort-0' --auto --rotate normal --output 'DVI-0' --auto --rotate left --right-of 'DisplayPort-0' --output 'DisplayPort-1' --auto --rotate left --right-of 'HDMI-0' --left-of 'DisplayPort-0' --output 'HDMI-0' --auto --rotate normal --left-of 'DisplayPort-1'
+
+  xdotool key 'super+w+2'
+  xdotool key 'super+e+3'
+  xdotool key 'super+r+4'
+  xdotool key 'super+q+1'
+fi
+
+xset r rate 200 90
+xmodmap ~/.xmodmap
+

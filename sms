@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+rm -f /tmp/sms.db
+ssh iphone 'sqlite3 /var/mobile/Library/SMS/sms.db "vacuum;" && tar -cz /var/mobile/Library/SMS/sms.db 2> /dev/null' | tar --warning=none --transform='s:^.*/::' -xz
+mv sms.db /tmp/sms.db
+query='select h.id, m.account, m.date, m.subject, m.text from message as m, handle as h where h.rowid = m.handle_id order by m.ROWID asc;'
+echo $query | sqlite3 -separator ' ' /tmp/sms.db
+
+# MAIL_SECONDS=$(echo "select date from voicemail where rowid = $base;" | sqlite3 voicemail.db)
+

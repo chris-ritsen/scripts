@@ -1,0 +1,10 @@
+#!/bin/sh
+
+export DISPLAY=:0
+
+/usr/bin/xrandr --output 'DisplayPort-0' --off --output 'DVI-0' --off --output 'HDMI-0' --off
+/usr/bin/xrandr --output 'DisplayPort-0' --auto --rotate normal --left-of 'DVI-0' --output 'HDMI-0' --auto --rotate left --left-of 'DisplayPort-0' --output 'DVI-0' --auto --rotate left
+
+xset r rate 200 90
+xmodmap ~/.xmodmap
+

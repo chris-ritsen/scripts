@@ -1,0 +1,65 @@
+#!/usr/bin/zsh
+
+# TODO: The intent of this script is to accept input from the numpad on the
+# apple wired keyboard.  This input will be read continuously and if a string
+# of numbers matches some key in redis, it will run the command defined by the
+# string value in that key; i.e., type 4444 to turn on all monitors, type 4545
+# to turn off the rightmost monitor, 4845 to rotate the leftmost monitor 90
+# clockwise from the original rotation.  The goal being to create a large
+# number of actions that can be done in sequence assuredly with blind input.
+
+function keypad() {
+
+# redis-cli --raw --scan --pattern '*'"${1}"
+
+if [[ "${1}" == '2' ]]; then
+
+redis-cli set keypad.1 "DISPLAY=:0 xrandr --output DisplayPort-0 --off --output DVI-0 --off --output DisplayPort-1  --off --output HDMI-0 --off && DISPLAY=:0 xrandr --addmode HDMI-0 1920x1080; DISPLAY=:0 xrandr --addmode DisplayPort-0 2560x1600; DISPLAY=:0 xrandr --output HDMI-0 --left-of DisplayPort-1 --mode 1920x1080 --output DisplayPort-0 --auto --output DVI-0 --auto --rotate left --right-of DisplayPort-0 --output DisplayPort-1  --auto --rotate left --left-of DisplayPort-0 && xdotool key 'super+w+2'; xdotool key 'super+e+3'; xdotool key 'super+r+4'; xdotool key 'super+q+1'; xdotool key 'super+w'" 1>/dev/null
+
+fi
+
+if [[ "${1}" == '1' ]]; then
+
+redis-cli set keypad.1 "DISPLAY=:0 xrandr --output DisplayPort-0 --off --output DVI-0 --off --output DisplayPort-1  --off --output HDMI-0 --off " 1>/dev/null
+
+fi
+
+# echo "** keypad.${1}"
+# redis-cli get keypad.1
+
+# local input=$(redis-cli --raw get 'keypad'':''input')
+
+# echo "${input}"
+
+# redis-cli --raw set 'keypad'':''input' "${input}""${0}" 1> /dev/null
+
+# input=$(redis-cli --raw get 'keypad'':''input')
+
+# echo "${input}"
+
+# local run_command=$(redis-cli --raw get 'keypad''.'"${input}")
+
+local run_command=$(redis-cli --raw get 'keypad''.''1')
+
+if [[ ! -z $run_command ]]; then
+
+$SHELL -c "$run_command"
+
+fi
+
+if [[ "${2}" ]]; then 
+
+# echo redis-cli --raw set 'keypad''.'"${1}"' '"${2}" 1> /dev/null 
+
+redis-cli --raw set 'keypad''.'"${1}"' '"'${2}'" 1> /dev/null 
+
+redis-cli --raw get 'keypad''.'"${1}"
+
+# redis-cli --raw get 'keypad''.'"${1}"
+
+fi
+
+}
+
+keypad ${*}
+

@@ -1,0 +1,22 @@
+#!/usr/bin/zsh
+
+function() {
+
+local hostname='0.0.0.0'
+
+local tabs_url='http''://'"${hostname}"':'"${remote_debug_port}"'/json'
+
+urls=$(noglob curl -sg "${tabs_url}" | underscore pluck url --outfmt text | grep -e '^https://thepiratebay.*/torrent/')
+
+IFS=$'\n' urls=($(sort <<< "${urls}"))
+
+for url in "${urls[@]}"; do
+
+  local magnet=$(noglob curl -sg "$url" | grep -oe 'magnet:.*" ' | sed -e 's/"//g' | sort -u | head -n1)
+
+  transmission-remote-cli "${magnet}" 1>/dev/null
+
+done
+
+}
+

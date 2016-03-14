@@ -1,0 +1,11 @@
+
+xkb_keymap {
+
+  xkb_compat    { include "complete" };
+  xkb_geometry  { include "macintosh(applealu_ansi)" };
+  xkb_keycodes  { include "evdev+aliases(qwerty)" };
+  xkb_symbols   { include "pc+us+inet(evdev)+apple(custom)" };
+  xkb_types     { include "complete" };
+
+};
+

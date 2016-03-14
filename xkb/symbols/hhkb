@@ -1,0 +1,22 @@
+
+partial alphanumeric_keys modifier_keys
+xkb_symbols "us" {
+
+    include "us"
+
+    key <AD11> { [ bracketleft, braceleft, adiaeresis, Adiaeresis ] };
+    key <AD12> { [ bracketright, braceright, aring, Aring ] };
+    key <BKSL> { [ backslash, bar, odiaeresis, Odiaeresis ] };
+    key <DELE> { [ Return ] };
+    key <HENK> { [ Super_R ] };
+    key <LALT> { [ Meta_L ] };
+    key <MUHE> { [ Super_L ] };
+    key <RALT> { [ Meta_R ] };
+    key <RTRN> { [ Control_R ] };
+    key <RWIN> { [ Super_R ] };
+    override key <TLDE> { [ asciitilde, grave ] };
+
+    modifier_map Mod1 { Meta_L, Meta_R };
+
+};
+

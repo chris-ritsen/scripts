@@ -1,0 +1,4 @@
+#!/bin/sh
+
+setleds -L -caps < /dev/console
+

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+/usr/local/bin/redis-cli set "remove" "yeah"
+export DISPLAY=:0
+
+/usr/bin/xrandr --output 'HDMI-0' --auto --rotate left --left-of 'DVI-0' --output 'DVI-0' --auto --rotate left --output 'DisplayPort-0' --off 
+

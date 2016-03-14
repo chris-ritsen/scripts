@@ -1,0 +1,1 @@
+transmission-remote -t 1 --files | grep -v '100%' | cut -d':' -f 1 | grep -oie'[0-9]*$' | xargs -I {} transmission-remote -t 1 -G '{}' 1>/dev/null

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+export DISPLAY=:0
+snes9x-gtk '/mnt/windows/roms/snes/Super_Mario_World_2-Yoshis_Island.smc'
+bg
+disown
+sleep 2
+xdotool key "Super+E" key "Super+e" 
+

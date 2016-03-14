@@ -1,0 +1,11 @@
+
+xkb_keymap {
+
+  xkb_compat    { include "complete" };
+  xkb_geometry  { include "hhk(win1)" };
+  xkb_keycodes  { include "evdev+aliases(qwerty)" };
+  xkb_symbols   { include "pc+hhkb(us)" };
+  xkb_types     { include "complete" };
+
+};
+

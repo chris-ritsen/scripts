@@ -1,0 +1,7 @@
+#!/bin/sh
+
+/usr/local/bin/redis-cli set "remove" "yeah"
+export DISPLAY=:0
+
+/usr/bin/xrandr --output 'DisplayPort-0' --off --output 'DVI-0' --off --output 'HDMI-0' --off --output 'DisplayPort-1' --off 
+

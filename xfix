@@ -1,0 +1,52 @@
+#!/usr/bin/zsh
+
+function() {
+
+export DISPLAY=:0
+
+# Not strictly necessary
+# xrandr --output DisplayPort-0 --off --output DVI-0 --off --output DisplayPort-1 --off --output HDMI-0 --off 
+
+# Add modes that may be missing
+xrandr --addmode HDMI-0 1920x1080
+xrandr --addmode DisplayPort-0 2560x1600
+
+# Setup monitors like xorg config
+
+xrandr --output HDMI-0 --left-of DisplayPort-1 --mode 1920x1080 --output DisplayPort-0 --auto --output DVI-0 --auto --rotate left --right-of DisplayPort-0 --output DisplayPort-1 --auto --rotate left --left-of DisplayPort-0 
+
+# Ensure numlock is enabled
+/usr/bin/numlockx on
+
+# Remember active desktop
+local desktop=$(xdotool getactivewindow get_desktop)
+
+# Reset window positions
+
+xdotool key --clearmodifiers 'super+w+2'
+xdotool key --clearmodifiers 'super+e+3'
+xdotool key --clearmodifiers 'super+r+4'
+xdotool key --clearmodifiers 'super+q+1'
+
+# Reset active window
+
+case $desktop in
+0)
+  xdotool key --clearmodifiers 'super+q'
+  ;;
+1)
+  xdotool key --clearmodifiers 'super+w'
+  ;;
+2)
+  xdotool key --clearmodifiers 'super+e'
+  ;;
+3)
+  xdotool key --clearmodifiers 'super+r'
+  ;;
+[4-9])
+  xdotool key --clearmodifiers 'super+e'
+  ;;
+esac
+
+}
+

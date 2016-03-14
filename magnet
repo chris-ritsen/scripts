@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+transmission-remote-cli "$1"
+

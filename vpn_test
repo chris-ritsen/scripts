@@ -1,0 +1,20 @@
+#!/usr/bin/expect
+
+set password "password"
+set hostname "vpn.website.com"
+set port "port"
+set username "username"
+
+eval spawn /opt/forticlient-sslvpn/64bit/forticlientsslvpn_cli --vpnuser $username --server $hostname:$port
+                                
+set prompt ":|#|\\\$"
+
+interact -o -nobuffer -re $prompt return
+send -- "$password\r"
+
+set prompt "\\)|#|\\\$"
+
+interact -o -nobuffer -re $prompt return
+send -- "y\r"
+interact
+

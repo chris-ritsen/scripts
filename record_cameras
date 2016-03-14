@@ -1,0 +1,337 @@
+#!/usr/bin/zsh
+
+duration=$1
+device=$2
+
+function () {
+
+# v4l2-ctl
+
+# backlight_compensation (int)          : min=0      max=1     step=1    default=0    value=1
+# brightness (int)                      : min=0      max=255   step=1    default=128  value=128
+# contrast (int)                        : min=0      max=255   step=1    default=128  value=128
+# exposure_absolute (int)               : min=3      max=2047  step=1    default=250  value=800
+# exposure_auto (menu)                  : min=0      max=3               default=3    value=1
+# exposure_auto_priority (bool)         :                                default=0    value=0
+# focus_absolute (int)                  : min=0      max=250   step=5    default=0    value=0
+# focus_auto (bool)                     :                                default=1    value=0
+# gain (int)                            : min=0      max=255   step=1    default=0    value=0
+# pan_absolute (int)                    : min=-36000 max=36000 step=3600 default=0    value=0
+# power_line_frequency (menu)           : min=0      max=2               default=2    value=2
+# saturation (int)                      : min=0      max=255   step=1    default=128  value=128
+# sharpness (int)                       : min=0      max=255   step=1    default=128  value=130
+# tilt_absolute (int)                   : min=-36000 max=36000 step=3600 default=0    value=0
+# white_balance_temperature (int)       : min=2000   max=6500  step=1    default=4000 value=4000
+# white_balance_temperature_auto (bool) :                                default=1    value=0
+# zoom_absolute (int)                   : min=100    max=500   step=1    default=100  value=100
+
+# guvcview
+
+# -a,--audio=AUDIO_API                  	:Select audio API (e.g none; port; pulse)
+# -b,--disable_libv4l2                  	:disable calls to libv4l2
+# -c,--capture=METHOD                   	:Set capture method [read | mmap (def)]
+# -d,--device=DEVICE                    	:Set device name (def: /dev/video0)
+# -e,--exit_on_term                     	:exit app after video or image capture ends
+# -f,--format=FOURCC                    	:Request format (e.g MJPG)
+# -g,--gui=GUI_API                      	:Select GUI API (e.g none; qt5)
+# -i,--image=FILENAME                   	:filename for captured image)
+# -j,--video=FILENAME                   	:filename for captured video)
+# -k,--audio_device=AUDIO_DEVICE        	:Select audio device index for selected api (0..N)
+# -m,--render_window=RENDER_WINDOW_FLAGS	:Set render window flags (e.g none; full; max)
+# -n,--photo_total=TOTAL                	:total number of captured photos)
+# -o,--audio_codec=CODEC                	:Audio codec [pcm mp2 mp3 aac ac3 vorb]
+# -p,--profile=FILENAME                 	:load control profile
+# -r,--render=RENDER_API                	:Select render API (e.g none; sdl)
+# -t,--photo_timer=TIME_IN_SEC          	:time (double) in sec. between captured photos)
+# -u,--video_codec=CODEC                	:Video codec [raw mjpg mpeg flv1 wmv1 mpg2 mp43 dx50 h264 vp80 theo]
+# -w,--verbosity=LEVEL                  	:Set Verbosity level (def: 0)
+# -x,--resolution=WIDTHxHEIGHT          	:Request resolution (e.g 640x480)
+# -y,--video_timer=TIME_IN_SEC          	:time (double) in sec. for video capture)
+# -z,--control_panel                    	:Start in control panel mode
+
+# TODO: more arguments
+
+# TODO: enumerate and identify video devices.
+
+local timer=''
+
+# local bin=/usr/bin/guvcview
+local bin=/Media/unsorted/guvcview/guvcview-src-2.0.3/guvcview/guvcview
+
+local device=$device
+
+if [[ ! -c $device ]]; then
+  device=/dev/video0
+fi
+
+local filename=$(date +%Y-%m-%d_%H-%M-%S)
+
+local outfile="${filename}"'.mkv'
+
+# echo $timer
+# return
+
+control_setup=(
+
+# exposure_auto=1
+focus_absolute=0
+
+)
+
+if [[ $device == '/dev/video1' ]]; then
+
+# C930e
+
+# nighttime 
+
+# controls+=(
+
+brightness=155
+contrast=100
+exposure_absolute=2047
+backlight_compensation=1
+gain=255
+saturation=100
+white_balance_temperature=3000
+
+# )
+
+# daytime
+
+# controls+=(
+
+# brightness=128
+# contrast=128
+# exposure_absolute=50
+# gain=128
+# saturation=128
+# backlight_compensation=0
+# white_balance_temperature=5500
+
+# )
+
+# evening
+
+controls+=(
+
+# brightness=128
+# contrast=128
+# exposure_absolute=600
+# gain=128
+# saturation=128
+# backlight_compensation=1
+# white_balance_temperature=5500
+
+)
+
+fi
+
+if [[ $device == '/dev/video0' ]]; then
+
+# C920
+
+# night time
+
+# controls+=(
+
+backlight_compensation=1
+brightness=155
+contrast=100
+exposure_absolute=1000
+gain=255
+saturation=100
+white_balance_temperature=3000
+
+# )
+
+# # daytime
+
+controls+=(
+
+# brightness=128
+# contrast=128
+# exposure_absolute=150
+# gain=128
+# saturation=128
+# backlight_compensation=0
+# white_balance_temperature=5500
+
+)
+
+# evening
+
+controls+=(
+
+# brightness=128
+# contrast=128
+# exposure_absolute=500
+# gain=90
+# saturation=128
+# backlight_compensation=1
+# white_balance_temperature=5500
+
+)
+
+
+fi
+
+controls+=(
+
+# TODO: time of day exposure controls
+
+# Low light
+# gain=255
+# backlight_compensation=1
+# exposure_absolute=2047
+
+# exposure_auto_priority=0
+# gain=50
+# backlight_compensation=0
+
+focus_auto=0
+sharpness=130
+
+)
+
+local control_list=$( IFS=','; echo "${controls[*]}" )
+
+# TODO: Mux additional audio streams (such as mpd playback, phone calls) into 
+# separate channels
+
+local codec='vp80'
+local height=720
+local width=1280
+
+# codec='mpg2'
+# height=1080
+# width=1920
+
+v4l2-ctl --device=$device --set-ctrl=white_balance_temperature_auto=0
+v4l2-ctl --device=$device --set-ctrl=exposure_auto=1
+v4l2-ctl --device=$device --set-ctrl=exposure_auto_priority=0
+v4l2-ctl --device=$device --set-ctrl=backlight_compensation=1
+v4l2-ctl --device=$device --set-ctrl=exposure_absolute=1000
+v4l2-ctl --device=$device --set-ctrl=$control_list_setup
+v4l2-ctl --device=$device --set-ctrl=$control_list
+
+if [[ -z $duration ]]; then
+
+# show output preview and allow for keyboard video capture
+
+$bin --gui=none --render=sdl --device=$device --video=$outfile 1>/dev/null 2>/dev/null
+
+return
+
+else
+
+timer=$(($duration * 60.0))
+
+fi
+
+if [[ $timer == '0.' ]]; then
+  $bin --gui=none --render=sdl --device=$device --video=$outfile 1>/dev/null 2>/dev/null
+
+  return
+fi
+
+guvcview_options=(
+
+# --audio=pulse
+
+# Audio Input
+
+--audio=none
+
+# --audio=pulse
+--audio_device=6
+--audio_codec=vorb
+
+# Video Input
+--device=$device
+
+# Encoder
+--verbosity=0
+--format=MJPG
+--gui=none 
+--render=none
+--render_window=none
+--exit_on_term
+
+# Not sure if effective
+# --capture=read
+
+# Video Settings
+
+--resolution="${width}"'x'"${height}"
+
+# Drops
+# --video_codec=mjpg
+
+# Drops
+# --video_codec=flv1
+
+# Drops
+# --video_codec=h264
+
+# Drops
+# --video_codec=raw
+
+# --video_codec=theo
+
+# Decent looking, drops frames.
+# --video_codec=mpeg
+
+# Excellent quality!  Drops frames though.
+# --video_codec=mpg2
+
+# No decoder for this garbage
+# --video_codec=mp43
+
+# Doesn't work at all
+# --video_codec=dx50
+
+# Decent performance but has low quality.  Problems when audio is added.
+--video_codec="${codec}"
+
+# Output file
+--video_timer=$timer
+--video=$outfile
+
+)
+
+# $bin --photo_total=1 --image=test.jpg --device=$device --exit_on_term --photo_timer=1
+# guvcview --device=/dev/video1 --photo_total=1 --image=test.jpg --photo_timer=1 --exit_on_term --render=none --render_window=none --resolution=1920x1080 --verbosity=3 --gui=none
+
+# echo \<body style="background-color: hsl(0, 0%, 100%)"\> > /tmp/white.html; \chromium --app=file:///tmp/white.html
+
+# $bin ${guvcview_options}
+
+# echo $bin ${guvcview_options}
+$bin ${guvcview_options} 1> /dev/null 2> /dev/null
+
+if [[ -f "${filename}"'-1.mkv' ]]; then
+
+# mv "${filename}"'-1.mkv' "$outfile" 2>/dev/null
+
+fi
+
+if [[ -f $outfile ]]; then
+
+ls -lh $outfile
+
+ffmpeg -hide_banner -i $outfile 2>/dev/null
+
+sleep 1.5
+
+# Only do this if the user is idle to avoid interruption
+
+# mpv --start=00:00:01 $outfile --loop --no-resume-playback # --pause
+
+# FIXME: first frame is always corrupted.  Remove it with ffmpeg, if possible.
+
+# ffmpeg -y -ss 1 -i $outfile -c:v copy -c:a copy 'fixed-'"${outfile}"
+
+fi
+
+}
+
