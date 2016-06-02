@@ -1,1 +1,1 @@
-Stale copy of my dotfiles
+Stale copy of my misc scripts.
